@@ -68,6 +68,17 @@ describe('version-bumper', () => {
       expect(contents).to.contain('4.x.y\n* 3.x.y\n* 2.x.y');
     });
 
+    it('updates correctly when a new stable version is promoted from beta', async () => {
+      const version = '4.0.0';
+      const currentVersion = '4.0.0-beta.29';
+      if (shouldUpdateSupported('stable', currentVersion, version)) {
+        await updateSupported(version, fixtureDir);
+      }
+      const contents = await readFile(fixtureDir, 'utf8');
+
+      expect(contents).to.contain('4.x.y\n* 3.x.y\n* 2.x.y');
+    });
+
     it('should not update when a new stable patch version is promoted', async () => {
       const version = '3.0.1';
       const currentVersion = '3.0.0';
@@ -139,6 +150,7 @@ describe('version-bumper', () => {
   // gclient sync on a linux machine. These tests therefore don't run as expected.
   ifdescribe(!(process.platform === 'linux' && process.arch.indexOf('arm') === 0) && process.platform !== 'darwin')('nextVersion', () => {
     const nightlyPattern = /[0-9.]*(-nightly.(\d{4})(\d{2})(\d{2}))$/g;
+    const alphaPattern = /[0-9.]*(-alpha[0-9.]*)/g;
     const betaPattern = /[0-9.]*(-beta[0-9.]*)/g;
 
     it('bumps to nightly from stable', async () => {
@@ -176,12 +188,42 @@ describe('version-bumper', () => {
       ).to.be.rejectedWith('Cannot bump to beta from stable.');
     });
 
-    it('bumps to beta from nightly', async () => {
+    it('bumps to alpha from nightly', async () => {
       const version = 'v2.0.0-nightly.19950901';
+      const next = await nextVersion('alpha', version);
+      const matches = next.match(alphaPattern);
+      expect(matches).to.have.lengthOf(1);
+    });
+
+    it('bumps to alpha from alpha', async () => {
+      const version = 'v2.0.0-alpha.8';
+      const next = await nextVersion('alpha', version);
+      expect(next).to.equal('2.0.0-alpha.9');
+    });
+
+    it('bumps to alpha from alpha if the previous alpha is at least alpha.10', async () => {
+      const version = 'v6.0.0-alpha.10';
+      const next = await nextVersion('alpha', version);
+      // Last 6.0.0 alpha we did was alpha.15
+      // So we expect a alpha.16 here
+      expect(next).to.equal('6.0.0-alpha.16');
+    });
+
+    it('bumps to beta from alpha', async () => {
+      const version = 'v2.0.0-alpha.8';
       const next = await nextVersion('beta', version);
       const matches = next.match(betaPattern);
       expect(matches).to.have.lengthOf(1);
+      expect(next).to.equal('2.0.0-beta.1');
     });
+
+    // TODO FIXME: Re-enable after Electron 15 alpha has released
+    // it('bumps to beta from nightly', async () => {
+    //   const version = 'v2.0.0-nightly.19950901';
+    //   const next = await nextVersion('beta', version);
+    //   const matches = next.match(betaPattern);
+    //   expect(matches).to.have.lengthOf(1);
+    // });
 
     it('bumps to beta from beta', async () => {
       const version = 'v2.0.0-beta.8';
