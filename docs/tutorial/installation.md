@@ -108,29 +108,24 @@ You can also override the local cache location by providing a `electron_config_c
 environment variable.
 
 The cache contains the version's official zip file as well as a checksum, stored as
-a text file. A typical cache might look like this:
+a text file. Each version is stored in a directory, where the directory name is the 
+SHA256 hash of the file path. A typical cache might look like this:
 
 ```sh
-├── httpsgithub.comelectronelectronreleasesdownloadv1.7.9electron-v1.7.9-darwin-x64.zip
-│   └── electron-v1.7.9-darwin-x64.zip
-├── httpsgithub.comelectronelectronreleasesdownloadv1.7.9SHASUMS256.txt
+├── E19E5D95A48B2D4BA21DA6EFD43BF02DFD93F4F905A7A4152D3E853F4EF3F930   
+│   └── electron-v13.1.0-darwin-x64.zip
+│   └── electron-v13.1.0-linux-x64.zip
+│   └── electron-v13.1.0-win32-x64.zip
 │   └── SHASUMS256.txt
-├── httpsgithub.comelectronelectronreleasesdownloadv1.8.1electron-v1.8.1-darwin-x64.zip
-│   └── electron-v1.8.1-darwin-x64.zip
-├── httpsgithub.comelectronelectronreleasesdownloadv1.8.1SHASUMS256.txt
+├── 8E4619DF6E5559F74D67410B6E110039B311F75388022C8A17F90149707A3640   
+│   └── electron-v14.0.0-beta.14-darwin-x64.zip
+│   └── electron-v14.0.0-beta.14-linux-x64.zip
+│   └── electron-v14.0.0-beta.14-win32-x64.zip
 │   └── SHASUMS256.txt
-├── httpsgithub.comelectronelectronreleasesdownloadv1.8.2-beta.1electron-v1.8.2-beta.1-darwin-x64.zip
-│   └── electron-v1.8.2-beta.1-darwin-x64.zip
-├── httpsgithub.comelectronelectronreleasesdownloadv1.8.2-beta.1SHASUMS256.txt
-│   └── SHASUMS256.txt
-├── httpsgithub.comelectronelectronreleasesdownloadv1.8.2-beta.2electron-v1.8.2-beta.2-darwin-x64.zip
-│   └── electron-v1.8.2-beta.2-darwin-x64.zip
-├── httpsgithub.comelectronelectronreleasesdownloadv1.8.2-beta.2SHASUMS256.txt
-│   └── SHASUMS256.txt
-├── httpsgithub.comelectronelectronreleasesdownloadv1.8.2-beta.3electron-v1.8.2-beta.3-darwin-x64.zip
-│   └── electron-v1.8.2-beta.3-darwin-x64.zip
-└── httpsgithub.comelectronelectronreleasesdownloadv1.8.2-beta.3SHASUMS256.txt
-    └── SHASUMS256.txt
+
+E19E5D9... is the SHA256 hash of "https://github.com/electron/electron/releases/download/v13.1.0"
+8E419DF... is the SHA256 hash of "https://github.com/electron/electron/releases/download/v14.0.0-beta.14"
+
 ```
 
 ## Skip binary download
